@@ -1,14 +1,10 @@
 include <constants/all.scad>
 include <soften/fillets.scad>
 
-module circular_fillet(d,r=5, angle=360) {
+module circular_fillet(d,r=5, angle=360,fillet_angle=90) {
   rotate_extrude(angle=angle)
     translate([d/2,0])
-      difference() {
-        $fn = fillet_fn($fn, r);
-        translate([-epsilon, -epsilon]) square(r+epsilon);
-        translate([r,r]) circle(r=r);
-      }
+      fillet_profile(r,fillet_angle, $fn = fillet_fn($fn, r));
 }
 
 module soft_cylinder(d, r, h,

@@ -30,6 +30,23 @@ module fillet_corner(r=0) {
     }
 }
 
+
+module fillet_profile(r, angle) {
+  $fn = fillet_fn($fn, r);
+  chord = r * sin(angle/2);
+  leg = tan(90-angle/2)*r;
+    echo("fillet angle; ",angle);
+  rotate(-angle/2)
+    difference() {
+      rotate(angle/2)
+        polygon([[0,0], [0,leg], [sin(angle)*leg, cos(angle)*leg]]);
+      translate([0,r/cos(90-angle/2)])
+        circle(r=r, $fn=500);
+    }
+}
+
+//fillet_profile(10,120);
+
 module filleted_cube(size, fillet_r=0) {
   translate([0,0,-epsilon/2])
     cube(size+[0,0,epsilon], center=true);
