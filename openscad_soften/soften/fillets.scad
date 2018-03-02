@@ -10,8 +10,11 @@ z_axis = 2;//[0,0,1];
 function fillet_fn(fn, r) = ceil(min(fn, r*6) / 4) * 4;
 
 module fillet(length, r, axis=x_axis) {
-  $fn = fillet_fn($fn, r);
+echo("$fn: ", $fn);
+  // FIXME: this limits $fn in ways that down propagate down and may actually be undesireable
+  //$fn = fillet_fn($fn, r);
   //echo("$fn in fillet is: ", $fn);
+  // FIXME: this should use fillet_profile instead of doing it's own geometry
   rotates = [[0,90,0],[90,0,0],[0,0,0]];
   mirrors = [[0,0,1],[0,1,0],[0,0,0]];
   mirror(mirrors[axis])
@@ -22,6 +25,18 @@ module fillet(length, r, axis=x_axis) {
       }
   }
 }
+
+module chamfer(length, r, axis=x_axis) {
+echo("$fn: ", $fn);
+  rotates = [[0,90,0],[90,0,0],[0,0,0]];
+  mirrors = [[0,0,1],[0,1,0],[0,0,0]];
+  mirror(mirrors[axis])
+    rotate(rotates[axis]) linear_extrude(length) {
+      chamfer_profile(r);
+  }
+}
+
+//chamfer(100, 10);
 
 module fillet_corner(r=0) {
     render() intersection() {
@@ -46,6 +61,15 @@ module fillet_profile(r, angle) {
 }
 
 //fillet_profile(10,120);
+
+
+module chamfer_profile(r) {
+  polygon([[-r,0], [-r,epsilon], [epsilon, epsilon], [epsilon, -r],[0,-r]]);
+}
+
+
+chamfer_profile(10);
+
 
 module filleted_cube(size, fillet_r=0) {
   translate([0,0,-epsilon/2])
