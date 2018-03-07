@@ -3,14 +3,9 @@ use <layout/layout.scad>
 use <soften/hole.scad>
 use <soften/cylinder.scad>
 
-x_axis = 0;//[1,0,0];
-y_axis = 1;//[0,1,0];
-z_axis = 2;//[0,0,1];
-
 function fillet_fn(fn, r) = ceil(min(fn, r*6) / 4) * 4;
 
 module fillet(length, r, axis=x_axis) {
-echo("$fn: ", $fn);
   // FIXME: this limits $fn in ways that down propagate down and may actually be undesireable
   //$fn = fillet_fn($fn, r);
   //echo("$fn in fillet is: ", $fn);
@@ -27,7 +22,6 @@ echo("$fn: ", $fn);
 }
 
 module chamfer(length, r, axis=x_axis) {
-echo("$fn: ", $fn);
   rotates = [[0,90,0],[90,0,0],[0,0,0]];
   mirrors = [[0,0,1],[0,1,0],[0,0,0]];
   mirror(mirrors[axis])
@@ -50,7 +44,6 @@ module fillet_profile(r, angle) {
   $fn = fillet_fn($fn, r);
   chord = r * sin(angle/2);
   leg = tan(90-angle/2)*r;
-    echo("fillet angle; ",angle);
   rotate(-angle/2)
     difference() {
       rotate(angle/2)
@@ -110,28 +103,10 @@ module inside_fillets(size, fillet_r=0) {
   }
 }
 
-//fillet_corner(3);
-//$fa=1;
-//$fs=0.1;
-//filleted_cube([25,25,5], fillet_r=1);
 *translate([-12.5,-12.5,-1]) difference() {
     cube([25,25,15]);
     translate([2.5,2.5,1]) cube([20,20,15]);
 }
 *inside_fillets([20,20,14], fillet_r=3);
 
-//fillet(5,1, x_axis);
-//fillet_corner(5);
-
 *fillet(35,5,x_axis);
-
-
-
-*translate([0,0,2.5]) difference() {
-  //$fn=fn(10);
-  union () {
-      //translate([0,0,-0.5]) cube([20,20,1], center=true);
-      soft_cylinder(d=30,h=30,roundover_r=5, fillet_r=10, fillet_arc=180);
-  }
-  translate([0,0,30]) hole(d=15,h=15, bottom_r=7.5, top_r =1.25);
-}
