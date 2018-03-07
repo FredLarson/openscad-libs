@@ -3,16 +3,15 @@ include <constants/all.scad>
 
 module hole(h, d, d1, d2, bottom_r=0, top_chamfer=0, top_r=0) {
 
-  function apothem(r, n) = r / cos (180 / n);
+  function apothem(d, n) = d / 2 / cos (180 / n);
 
   input_top_d = d1 ? d1 : d;
   input_bot_d = d2 ? d2 : d;
 
-  n = max(round(2 * input_top_d), 12, $fn);
+  n = max(round(input_top_d * 2), 12, $fn);
 
-  // FIXME: this is silly to deal in d here but apothem in r
-  bot_d = apothem(input_bot_d/2.0, n)*2;
-  top_d = apothem(input_top_d/2.0, n)*2;
+  bot_d = apothem(input_bot_d, n)*2;
+  top_d = apothem(input_top_d, n)*2;
 
   $fn = n;
   height = h + epsilon;
@@ -41,6 +40,7 @@ module hole(h, d, d1, d2, bottom_r=0, top_chamfer=0, top_r=0) {
             polygon([[0,0], [0,top_chamfer+epsilon], [top_chamfer+epsilon, top_chamfer+epsilon]]);
     }
   } else if(top_r > 0) {
+    // FIXME: extract profile like we did on circular_fillet
     translate([0,0,-top_r])
       rotate_extrude()
         translate([d/2-epsilon,0])
@@ -51,4 +51,3 @@ module hole(h, d, d1, d2, bottom_r=0, top_chamfer=0, top_r=0) {
   }
 }
 
-//hole(h=20,d1=10, d2=5, top_r = 0, bottom_r=0);

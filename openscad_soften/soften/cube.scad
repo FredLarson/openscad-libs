@@ -1,6 +1,6 @@
 use <layout/layout.scad>
 use <validation/validate.scad>
-use <soften/fillets.scad>
+use <soften/fillet.scad>
 use <soften/square.scad>
 include <constants/all.scad>
 

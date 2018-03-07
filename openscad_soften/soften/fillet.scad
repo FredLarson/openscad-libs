@@ -3,34 +3,24 @@ use <layout/layout.scad>
 use <soften/hole.scad>
 use <soften/cylinder.scad>
 
-function fillet_fn(fn, r) = ceil(min(fn, r*6) / 4) * 4;
+function fillet_fn(fn, r) = ceil(min(max(fn, 12), r*6) / 4) * 8;
 
 module fillet(length, r, axis=x_axis) {
-  // FIXME: this limits $fn in ways that down propagate down and may actually be undesireable
-  //$fn = fillet_fn($fn, r);
-  //echo("$fn in fillet is: ", $fn);
-  // FIXME: this should use fillet_profile instead of doing it's own geometry
+  $fn = fillet_fn($fn, r);
   rotates = [[0,90,0],[90,0,0],[0,0,0]];
   mirrors = [[0,0,1],[0,1,0],[0,0,0]];
   mirror(mirrors[axis])
-    rotate(rotates[axis]) linear_extrude(length) {
-      difference() {
-        translate([-epsilon, -epsilon]) square(r+epsilon);
-        translate([r,r]) circle(r=r);
-      }
-  }
+    rotate(rotates[axis])
+      linear_extrude(length)
+        fillet_profile(r, 90);
 }
 
-module chamfer(length, r, axis=x_axis) {
-  rotates = [[0,90,0],[90,0,0],[0,0,0]];
-  mirrors = [[0,0,1],[0,1,0],[0,0,0]];
-  mirror(mirrors[axis])
-    rotate(rotates[axis]) linear_extrude(length) {
-      chamfer_profile(r);
-  }
-}
 
-//chamfer(100, 10);
+module circular_fillet(d,r=5, angle=360,fillet_angle=90) {
+  rotate_extrude(angle=angle)
+    translate([d/2,0])
+      fillet_profile(r,fillet_angle, $fn = fillet_fn($fn, r));
+}
 
 module fillet_corner(r=0) {
     render() intersection() {
@@ -38,7 +28,6 @@ module fillet_corner(r=0) {
         fillet(r+epsilon,r,y_axis);
     }
 }
-
 
 module fillet_profile(r, angle) {
   $fn = fillet_fn($fn, r);
@@ -49,20 +38,9 @@ module fillet_profile(r, angle) {
       rotate(angle/2)
         polygon([[0,0], [0,leg], [sin(angle)*leg, cos(angle)*leg]]);
       translate([0,r/cos(90-angle/2)])
-        circle(r=r, $fn=500);
+        circle(r=r);
     }
 }
-
-//fillet_profile(10,120);
-
-
-module chamfer_profile(r) {
-  polygon([[-r,0], [-r,epsilon], [epsilon, epsilon], [epsilon, -r],[0,-r]]);
-}
-
-
-chamfer_profile(10);
-
 
 module filleted_cube(size, fillet_r=0) {
   translate([0,0,-epsilon/2])
@@ -80,7 +58,7 @@ module filleted_cube(size, fillet_r=0) {
 }
 
 module inside_fillets(size, fillet_r=0) {
-  $fn = fillet_fn($fn, r);
+  $fn = fillet_fn($fn, fillet_r);
   mirror_y() {
     translate([-size[0]/2,-size[1]/2,0]) fillet(size[0],fillet_r,x_axis);
   }
@@ -93,8 +71,7 @@ module inside_fillets(size, fillet_r=0) {
     translate([-size[0]/2,-size[1]/2,0]) fillet(size[2],fillet_r,z_axis);
   }
 
-  // this is close but the mesh it renders is a little off, maybe misses epsilon or something?
-  // FIXME - should do the ball on the inside corner no matter what
+  // FIXME: extract this into some sort of inside_fillet()-type module
   mirror_xy() {
      difference() {
         translate([-size[0]/2,-size[1]/2,0]) cube([fillet_r,fillet_r,fillet_r]);
@@ -102,11 +79,3 @@ module inside_fillets(size, fillet_r=0) {
      }
   }
 }
-
-*translate([-12.5,-12.5,-1]) difference() {
-    cube([25,25,15]);
-    translate([2.5,2.5,1]) cube([20,20,15]);
-}
-*inside_fillets([20,20,14], fillet_r=3);
-
-*fillet(35,5,x_axis);

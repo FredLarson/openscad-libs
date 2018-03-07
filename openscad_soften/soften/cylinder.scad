@@ -1,11 +1,5 @@
 include <constants/all.scad>
-include <soften/fillets.scad>
-
-module circular_fillet(d,r=5, angle=360,fillet_angle=90) {
-  rotate_extrude(angle=angle)
-    translate([d/2,0])
-      fillet_profile(r,fillet_angle, $fn = fillet_fn($fn, r));
-}
+include <soften/fillet.scad>
 
 module soft_cylinder(d, r, h,
                      d1, d2, chamfer=0,
@@ -41,5 +35,3 @@ module soft_cylinder(d, r, h,
   }
 }
 
-//soft_cylinder(d1=10, d2=5, h=15,roundover_r=0, fillet_r=0, fillet_angle=360);
-//soft_cylinder(d=12, h=15,roundover_r=5, fillet_r=3);
