@@ -5,7 +5,7 @@ require "openscad_util/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "openscad_util"
-  spec.version       = OpenscadUtil::VERSION
+  spec.version       = '0.1.0'
   spec.authors       = ["Joe Francis"]
   spec.email         = ["joe@lostapathy.com"]
 

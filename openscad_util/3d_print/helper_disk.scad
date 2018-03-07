@@ -6,6 +6,7 @@ module helper_disks_for_rectangle(size, diameter=15, center=true) {
   x_size = size[0];
   y_size = size[1];
   outset = diameter*0.1; // amount to move disk off-center
+  // FIXME: use mirror_xy() to replace most of this logic
   disc_offsets = [[-outset, -outset, 0],
                [-outset, y_size + outset, 0],
                [x_size + outset, y_size + outset, 0],
@@ -17,3 +18,5 @@ module helper_disks_for_rectangle(size, diameter=15, center=true) {
       translate(offset) helper_disk();
     }
 }
+
+// FIXME: create demo for this module

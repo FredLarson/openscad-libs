@@ -5,4 +5,5 @@ x_axis=0;
 y_axis=1;
 z_axis=2;
 
+// FIXME: this is not a constant
 function fn(r) = $fn > 0 ? $fn : max(5, ceil(min(360/$fa, r*2*PI/$fs)));

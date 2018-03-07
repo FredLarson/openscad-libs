@@ -29,8 +29,8 @@ module mirror_xyz() {
   mirror_x() mirror_y() mirror_z() children();
 }
 
-module repeat_with_offset(offset, iterations=1) {
-  for(i = [0:iterations-1]) {
+module repeat_with_offset(offset, copies=1) {
+  for(i = [0:copies-1]) {
     translate(offset * i)
       children();
   }
