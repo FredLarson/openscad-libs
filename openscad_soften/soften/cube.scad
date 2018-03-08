@@ -16,7 +16,9 @@ module soft_cube(size, r=0, center=false, sidesonly=true) {
         linear_extrude(z_dim)
           soft_square([x_dim, y_dim], r, center=true);
   } else {
-    hull() difference() {
+    // FIXME: this has different $fn for different corners
+    hull() 
+    difference() {
       soft_cube(size,r=r,center=true);
       mirror_xyz()
         translate([-x_dim/2, -y_dim/2, -z_dim/2]) fillet(x_dim, r, x_axis);

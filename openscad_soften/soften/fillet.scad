@@ -36,7 +36,12 @@ module fillet_profile(r, angle) {
   rotate(-angle/2)
     difference() {
       rotate(angle/2)
-        polygon([[0,0], [0,leg], [sin(angle)*leg, cos(angle)*leg]]);
+        polygon([
+          [-epsilon, -epsilon],
+          [-epsilon, leg], [0,leg],
+          [sin(angle)*leg, cos(angle)*leg],
+          [sin(angle)*leg, cos(angle)*leg-epsilon]
+        ]);
       translate([0,r/cos(90-angle/2)])
         circle(r=r);
     }
